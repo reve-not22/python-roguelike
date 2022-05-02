@@ -23,7 +23,7 @@ inputSeed = None
 
 globalObjectPool = ['$', '$', '$', '%', '%', '%', '^', '^', '*', '*', 'A', 'H', '&']
 
-def GenerateSeed(charAmt):
+def GenerateSeed(charAmt=9):
     seed = ""
     for i in range(0, charAmt):
         seed += str(random.randint(0, 9))
@@ -35,14 +35,20 @@ def ChangeSeed(seed):
     return seed
 
 def SaveSeed(seed):
-    seedFile = open("Seeds.txt", "a")
-    seedFile.write(" " + str(seed) + " ")
-    seedFile.close()
+    try:
+        seedFile = open("Seeds.txt", "a")
+        seedFile.write(" " + str(seed) + " ")
+        seedFile.close()
+    except:
+        print("Saving failed.")
 
 def ViewSeeds():
-    seedFile = open("Seeds.txt", "r")
-    print(seedFile.read())
-    seedFile.close()
+    try:
+        seedFile = open("Seeds.txt", "r")
+        print(seedFile.read())
+        seedFile.close()
+    except:
+        print("Cannot open seed file.")
 
 def InitGen(seedCharacters):
     currentSeed = GenerateSeed(seedCharacters)
