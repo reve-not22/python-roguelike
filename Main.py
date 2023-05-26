@@ -45,25 +45,33 @@ class Object:
         mapObjectPool.remove(self)
 
     def setPos(self, x, y):
-        try:
-            if gameMap[x][y] == emptyCharacter:
-                if not(self.x == None or self.y == None): #check if the object is on the map
-                    if gameMap[self.x][self.y] == self.character: # set the map to empty if you were at that point before
-                        gameMap[self.x][self.y] = emptyCharacter
-                self.x = x
-                self.y = y# set internal position
-                gameMap[self.x][self.y] = self.character # set map character
-            else:
-                print("Space is already occupied.")
-        except:
+        if (x > mapSizeX - 1) or (y > mapSizeY - 1) or (x < 0) or (y < 0):
             print("Space is out of bounds")
+        elif (gameMap[x][y] == emptyCharacter):
+            if not(self.x == None or self.y == None): #check if the object is on the map
+                if gameMap[self.x][self.y] == self.character: # set the map to empty if you were at that point before
+                    gameMap[self.x][self.y] = emptyCharacter
+            self.x = x
+            self.y = y# set internal position
+            gameMap[self.x][self.y] = self.character # set map character
+        else:
+            print("Space is already occupied.")
 
 class Door(Object):
     '''Openable and closable door object'''
     character = "{"
+    state = "closed"
 
     def __init__(self, coords):
         super().__init__("{", startPos=coords)
+
+    def changeState(self):
+        if (state == "closed"):
+            self.state = "open"
+            self.character = "0"
+        else:
+            self.state = "closed"
+            self.character = "{"
 
 class Wall(Object):
     '''Immovable/unbreakable wall object'''
@@ -75,8 +83,8 @@ class Wall(Object):
 class Consumable(Object):
     '''Consumable class, can use to give the player stats or health'''
 
-    def __init__(self, character='&', healPoints=0, speedIncrease=0, dmgIncrease=0, healthIncrease=0, xpIncrease=0):
-        super().__init__(character)
+    def __init__(self, character='&', isSolidObject=False, healPoints=0, speedIncrease=0, dmgIncrease=0, healthIncrease=0, xpIncrease=0):
+        super().__init__(character, isSolidObject)
         self.healPoints = healPoints
         self.speedIncrease = speedIncrease
         self.dmgIncrease = dmgIncrease
@@ -180,7 +188,7 @@ def PopulateObjectPool(pool, maxConsumables, maxEnemies):
             else:
                 hI += 1
 
-        pool.append(Consumable('&', hp, sI, dI, hI))
+        pool.append(Consumable('&', False, hp, sI, dI, hI))
     #for y in range(0, random.randint(maxEnemies / 2, maxEnemies)):
         #add enemy to object pool
 
